@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-// Root route
+// Dynamic date route
 router.get('/:date', (req, res) => {
     let date = undefined
     let unix = undefined
@@ -13,10 +13,19 @@ router.get('/:date', (req, res) => {
     } else if (isValidUnixString(req.params.date)) {
         unix = parseInt(req.params.date)
         date = new Date(unix)
+    } else {
+        res.json({error : "Invalid Date"})
+        return
     }
 
     res.json({unix: unix, utc: date.toUTCString()})
 });
+
+// Root route
+router.get('/', (req, res) => {
+    date = new Date()
+    res.json({unix: dateToUnix(date), utc: date.toUTCString()})
+})
 
 // Functions
 function dateToUnix(date) {
@@ -33,6 +42,5 @@ function isValidUnixString(stamp) {
     }
     return true
 }
-
 
 module.exports = router
