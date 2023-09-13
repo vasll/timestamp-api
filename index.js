@@ -1,15 +1,15 @@
-const express = require('express');
-const app = express();
+var express = require('express');
 const routes = require('./routes');
+var cors = require('cors');
+var app = express();
+
+// Use CORS middleware
+app.use(cors({optionsSuccessStatus: 200}));
 
 // Import routes
 app.use('/api', routes);
 
-// Enable CORS
-var cors = require('cors');
-app.use(cors({optionsSuccessStatus: 200}));
-
-// Listen for requests
+// Start listening on process.env.PORT
 var listener = app.listen(process.env.PORT, function () {
-  console.log('Your app is listening on localhost:' + listener.address().port);
+  console.log('Your app is listening on port ' + listener.address().port);
 });
