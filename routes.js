@@ -4,15 +4,18 @@ const router = express.Router();
 // Root route
 router.get('/:date', (req, res) => {
     let date = undefined
+    let unix = undefined
 
-    // Parse date to INT if it's an UNIX timestamp, otherwise parse a Date object from it
-    const unixTimestamp = parseInt(req.params.date)
-    if (isNaN(unixTimestamp)) {
+    // Parse given date to date object
+    if (isValidDate(req.params.date)){
         date = new Date(req.params.date)
+        unix = dateToUnix(date)
+    } else if (isValidUnixString(req.params.date)) {
+        unix = parseInt(req.params.date)
+        date = new Date(unix)
     }
-    date = new Date(unixTimestamp)
 
-    res.json({unix: dateToUnix(date), utc: date.toUTCString()})
+    res.json({unix: unix, utc: date.toUTCString()})
 });
 
 // Functions
@@ -20,4 +23,16 @@ function dateToUnix(date) {
     return Math.floor(date.getTime())
 }
 
-module.exports = router;
+function isValidDate(dateString) {
+    return !isNaN(Date.parse(dateString))
+}
+
+function isValidUnixString(stamp) {
+    if(isNaN(parseInt(stamp))) {
+        return false
+    }
+    return true
+}
+
+
+module.exports = router
